@@ -1,7 +1,7 @@
-package uui;
+package ui;
 
-import uui.neural.NeuralNetwork;
-import uui.utils.DataSet;
+import ui.neural.NeuralNetwork;
+import ui.utils.DataSet;
 
 import java.io.IOException;
 import java.util.Arrays;

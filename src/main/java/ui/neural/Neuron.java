@@ -1,4 +1,4 @@
-package uui.neural;
+package ui.neural;
 
 import java.util.ArrayList;
 import java.util.List;

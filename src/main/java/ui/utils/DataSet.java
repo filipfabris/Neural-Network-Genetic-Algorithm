@@ -1,4 +1,4 @@
-package uui.utils;
+package ui.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,12 +9,13 @@ import java.util.Map;
 
 public class DataSet {
 
-    public Map<Float, Float> data;
+    public Map<Float, Float[]> data;
     String fileName;
 
-    public DataSet(String fileName) {
+    public DataSet(String fileName) throws IOException {
         this.data = new LinkedHashMap<>();
         this.fileName = fileName;
+        this.readData();
     }
 
     public void readData() throws IOException {
@@ -22,8 +23,14 @@ public class DataSet {
         lines.remove( 0 ); // remove header
 
         for (String line : lines) {
-            String[] parts = line.split(",");
-            data.put(Float.parseFloat(parts[0]), Float.parseFloat(parts[1]));
+            String[] parts = line.split(","); //x1,x2,...xn,yn
+
+            Float[] xValues = new Float[parts.length-1]; //x1,x2,...xn
+            for(int i = 0; i< parts.length-1; i++){
+                xValues[i] = Float.parseFloat( parts[i] );
+            }
+            Float yValues = Float.parseFloat(parts[parts.length-1]); //y
+            data.put(yValues, xValues);
         }
     }
 }

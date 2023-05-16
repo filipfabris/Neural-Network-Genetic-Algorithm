@@ -1,4 +1,4 @@
-package uui.neural;
+package ui.neural;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;

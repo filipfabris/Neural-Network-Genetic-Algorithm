@@ -1,6 +1,6 @@
-package uui.neural;
+package ui.neural;
 
-import uui.utils.DataSet;
+import ui.utils.DataSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,10 +65,12 @@ public class NeuralNetwork {
         }
     }
 
-    public float emulate(float input){
+    public float emulate(Float[] input){
         //input layer
         Layer inputLayer = layers.get(0);
-        inputLayer.neurons.get(0).value = input;
+        for(int i = 0; i<inputLayer.neurons.size(); i++){
+            inputLayer.neurons.get( i ).value = input[i];
+        }
 
         Layer prevLayer = inputLayer;
         for(int i = 1; i < layers.size(); i++){
@@ -81,22 +83,26 @@ public class NeuralNetwork {
 
             prevLayer = layer;
         }
+
+        //prevLayer is now output layer
         return prevLayer.neurons.get(0).value;
     }
 
     public void train(DataSet dataSet){
-        List<Float> inputs = dataSet.data.keySet().stream().toList();
-        List<Float> outputs = dataSet.data.values().stream().toList();
+        List<Float[]> dataSetInputs = dataSet.data.values().stream().toList();
+        List<Float> dataSetOutputs = dataSet.data.keySet().stream().toList();
 
         float sumSquaredError = 0;
-        for(int i = 0; i < inputs.size(); i++){
-            float input = inputs.get(i);
-            float output = outputs.get(i);
-            float emulatedOutput = emulate(input);
+        for(int i = 0; i < dataSetOutputs.size(); i++){
+            Float[] inputs = dataSetInputs.get( i );
+            float output = dataSetOutputs.get( i );
+            float emulatedOutput = this.emulate( inputs );
+
             float error = output - emulatedOutput;
             sumSquaredError += error * error;
+
         }
-        squaredError = sumSquaredError / inputs.size();
+        squaredError = sumSquaredError / dataSetOutputs.size();
 //        System.out.println("Squared error: " + squaredError);
     }
 

@@ -1,9 +1,9 @@
-package uui.genetic;
+package ui.genetic;
 
-import uui.utils.DataSet;
-import uui.neural.Layer;
-import uui.neural.NeuralNetwork;
-import uui.neural.Neuron;
+import ui.utils.DataSet;
+import ui.neural.Layer;
+import ui.neural.NeuralNetwork;
+import ui.neural.Neuron;
 
 import java.util.*;
 
@@ -34,18 +34,25 @@ public class GeneticAlgorithm {
     }
 
     public void algorithm(){
-        for (int i = 0; i < numberOfIterations; i++) {
+        NeuralNetwork bestNetworkSolution = null;
+
+        for (int i = 0; i <= numberOfIterations; i++) {
 
             this.propagate();
             this.population.sort( sortPopulation );
+
+            if(bestNetworkSolution == null || bestNetworkSolution.squaredError > population.get( 0 ).squaredError){
+                bestNetworkSolution = population.get( 0 );
+            }
 
             List<NeuralNetwork> newPopulation = new ArrayList<>();
             for (int j = 0; j < elitism; j++) {
                 newPopulation.add( population.get( j ) );
             }
 
-            if (i % 100 == 0) {
-                System.out.println( "Iteration: " + i + " Error: " + population.get( 0 ).squaredError );
+            // [Train error @2000]: 0.002106
+            if(i % 2000 == 0){
+                System.out.println( "[Train error @"+i+"]: " + population.get( 0 ).squaredError );
             }
 
             //Genes crossover
@@ -54,7 +61,7 @@ public class GeneticAlgorithm {
                 newPopulation.add( this.proportionalSelection() );
 
                 //Best selection
-                //newPopulation.add( this.bestSelection( newPopulation ) );
+//                newPopulation.add( this.bestSelection( newPopulation ) );
             }
 
             //Genome mutation
@@ -65,6 +72,9 @@ public class GeneticAlgorithm {
 
             population = newPopulation;
         }
+
+        //[Test error]: 0.000433
+        System.out.println( "[Test error]: " + bestNetworkSolution.squaredError );
     }
 
     private void propagate() {
@@ -111,10 +121,6 @@ public class GeneticAlgorithm {
     public NeuralNetwork bestSelection(List<NeuralNetwork> newPopulation){
         NeuralNetwork parent1 = newPopulation.get( random.nextInt( newPopulation.size()) );
         NeuralNetwork parent2 = newPopulation.get( random.nextInt( newPopulation.size()) );
-
-        if(newPopulation.size() != 0){
-            parent2 = newPopulation.get( random.nextInt( newPopulation.size()) );
-        }
 
         NeuralNetwork child = this.crossoverGenes( parent1, parent2 );
         return child;
