@@ -18,16 +18,19 @@ public class GeneticAlgorithm {
     private final int elitism;
     private final double mutationProbability;
     private final double mutationStandardDeviation;
-    private final DataSet dataSet;
+    private final DataSet trainDataSet;
 
-    public GeneticAlgorithm(DataSet dataSet, List<Integer> arhitecture, int populationSize, int elitism, double mutationProbability, double mutationStandardDeviation, int numberOfIterations) {
+    private final DataSet testDataSet;
+
+    public GeneticAlgorithm(DataSet trainDataSet, DataSet testDataSet, List<Integer> arhitecture, int populationSize, int elitism, double mutationProbability, double mutationStandardDeviation, int numberOfIterations) {
         this.population = new ArrayList<>();
         this.populationSize = populationSize;
         this.numberOfIterations = numberOfIterations;
         this.elitism = elitism;
         this.mutationProbability = mutationProbability;
         this.mutationStandardDeviation = mutationStandardDeviation;
-        this.dataSet = dataSet;
+        this.trainDataSet = trainDataSet;
+        this.testDataSet = testDataSet;
 
         this.initPopulation( arhitecture );
         this.algorithm();
@@ -65,7 +68,7 @@ public class GeneticAlgorithm {
             }
 
             //Genome mutation
-            //this.mutateGenome( newPopulation );
+//            this.mutateGenome( newPopulation );
 
             // Genes mutation
             this.mutateGenes( newPopulation );
@@ -74,12 +77,14 @@ public class GeneticAlgorithm {
         }
 
         //[Test error]: 0.000433
+        bestNetworkSolution.train( testDataSet );
         System.out.println( "[Test error]: " + bestNetworkSolution.squaredError );
+
     }
 
     private void propagate() {
         for (NeuralNetwork neuralNetwork : population) {
-            neuralNetwork.train( dataSet );
+            neuralNetwork.train( trainDataSet );
         }
     }
 
@@ -151,21 +156,22 @@ public class GeneticAlgorithm {
     //Mutate genes one by one - weight and bias
     private void mutateGenes(List<NeuralNetwork> newPopulation){
         for (NeuralNetwork neuralNetwork : newPopulation) {
-            if (Math.random() < mutationProbability) {
-
                 NeuralNetwork.FlattenNeuralNetwork flattenNeuralNetwork = neuralNetwork.flatten();
                 for (int i = 0; i < flattenNeuralNetwork.weights.size(); i++) {
-                    float newWeight = (float) (flattenNeuralNetwork.weights.get( i ) + random.nextGaussian( 0, 0.1 ));
-                    flattenNeuralNetwork.weights.set( i, newWeight );
+                    if (Math.random() < mutationProbability) {
+                        float newWeight = (float) (flattenNeuralNetwork.weights.get( i ) + random.nextGaussian( 0, 0.1 ));
+                        flattenNeuralNetwork.weights.set( i, newWeight );
+                    }
                 }
                 for (int i = 0; i < flattenNeuralNetwork.biases.size(); i++) {
-                    float newBias = (float) (flattenNeuralNetwork.biases.get( i ) + random.nextGaussian( 0, mutationStandardDeviation ));
-                    flattenNeuralNetwork.biases.set( i, newBias );
+                    if (Math.random() < mutationProbability) {
+                        float newBias = (float) (flattenNeuralNetwork.biases.get( i ) + random.nextGaussian( 0, mutationStandardDeviation ));
+                        flattenNeuralNetwork.biases.set( i, newBias );
+                    }
                 }
 
                 NeuralNetwork mutatedNetwork = flattenNeuralNetwork.convertToNeuralNetwork();
                 neuralNetwork.layers = mutatedNetwork.layers;   //new reference to layers from mutated network
-            }
         }
     }
 

@@ -7,20 +7,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+//
+//Examples
+//
+//--train examples/sine_train.txt --test examples/sine_test.txt --nn 5s --popsize 10 --elitism 1 --p 0.1 --K 0.1 --iter 10000
+//--train examples/rosenbrock_train.txt --test examples/rosenbrock_test.txt --nn 20s --popsize 20 --elitism 3 --p 0.5 --K 10. --iter 10000
+//--train examples/rastrigin_train.txt --test examples/rastrigin_test.txt --nn 5s --popsize 10 --elitism 1 --p 0.3 --K 0.5 --iter 10000
 public class Solution {
     public static void main(String[] args) throws IOException {
-
-//        String testFile = "train.txt";
-//        DataSet testDataSet = new DataSet(testFile);
-//        testDataSet.readData();
-//
-//        //Messure time
-//        long startTime = System.currentTimeMillis();
-//        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(testDataSet, Arrays.asList( 1, 5, 1 ), 10, 1, 0.1, 0.1, 2000);
-//        long endTime = System.currentTimeMillis();
-//
-//        System.out.println("Time: " + (endTime - startTime) + "ms");
-
 
         String trainFile = null;
         String testFile = null;
@@ -50,7 +44,7 @@ public class Solution {
 
         List<Integer> architectureList = parseArchitecture( architecture, trainDataSet );
 
-        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(trainDataSet, architectureList, populationSize, elitism, mutationRate, mutationStandardDeviation, iterations);
+        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(trainDataSet, testDataSet, architectureList, populationSize, elitism, mutationRate, mutationStandardDeviation, iterations);
 
     }
 
